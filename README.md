@@ -7,6 +7,10 @@ from matplotlib.patches import Patch
 import numpy as np
 from scipy.stats import chisquare, monte_carlo_test
 from statsmodels.stats.multitest import multipletests
+from IPython.display import Markdown, display
+
+def display_df(df):
+    display(Markdown(df.to_markdown(index=False)))
 ```
 
 # Exploring randomness in lottery drawings
@@ -31,7 +35,7 @@ The historical drawing results used in this analysis are available from the [Flo
 
       % Total    % Received % Xferd  Average Speed  Time    Time    Time   Current
                                      Dload  Upload  Total   Spent   Left   Speed
-    100 729.9k 100 729.9k   0      0  1.01M      0                              0
+    100 729.9k 100 729.9k   0      0  1.57M      0                              0
 
 
 
@@ -39,10 +43,6 @@ The historical drawing results used in this analysis are available from the [Flo
 # ignore first page ==> additional content creates a parsing problems
 df_lst_raw = tabula.read_pdf("pb.pdf", pages="2-90")
 ```
-
-    Failed to import jpype dependencies. Fallback to subprocess.
-    No module named 'jpype'
-
 
 
 ```python
@@ -57,142 +57,27 @@ Why are there 178 elements instad of just 89?
 
 
 ```python
-df_lst_raw[0].head()
+display_df(df_lst_raw[0].head())
 ```
 
 
-
-
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>Draw Date</th>
-      <th>Winning Numbers</th>
-      <th>Game</th>
-      <th>Unnamed: 0</th>
-      <th>Unnamed: 1</th>
-      <th>Unnamed: 2</th>
-      <th>Unnamed: 3</th>
-      <th>Unnamed: 4</th>
-      <th>Unnamed: 5</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>7/25/26</td>
-      <td>3</td>
-      <td>4</td>
-      <td>24</td>
-      <td>36</td>
-      <td>47</td>
-      <td>PB 17</td>
-      <td>X4</td>
-      <td>POWERBALL</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>7/25/26</td>
-      <td>20</td>
-      <td>21</td>
-      <td>26</td>
-      <td>28</td>
-      <td>32</td>
-      <td>PB 10</td>
-      <td>NaN</td>
-      <td>POWERBALL DP</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>7/22/26</td>
-      <td>4</td>
-      <td>5</td>
-      <td>22</td>
-      <td>50</td>
-      <td>58</td>
-      <td>PB 1</td>
-      <td>X3</td>
-      <td>POWERBALL</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>7/22/26</td>
-      <td>9</td>
-      <td>51</td>
-      <td>54</td>
-      <td>60</td>
-      <td>61</td>
-      <td>PB 15</td>
-      <td>NaN</td>
-      <td>POWERBALL DP</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>7/20/26</td>
-      <td>2</td>
-      <td>9</td>
-      <td>44</td>
-      <td>53</td>
-      <td>59</td>
-      <td>PB 8</td>
-      <td>X2</td>
-      <td>POWERBALL</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-
+| Draw Date   |   Winning Numbers |   Game |   Unnamed: 0 |   Unnamed: 1 |   Unnamed: 2 | Unnamed: 3   | Unnamed: 4   | Unnamed: 5   |
+|:------------|------------------:|-------:|-------------:|-------------:|-------------:|:-------------|:-------------|:-------------|
+| 7/25/26     |                 3 |      4 |           24 |           36 |           47 | PB 17        | X4           | POWERBALL    |
+| 7/25/26     |                20 |     21 |           26 |           28 |           32 | PB 10        | nan          | POWERBALL DP |
+| 7/22/26     |                 4 |      5 |           22 |           50 |           58 | PB 1         | X3           | POWERBALL    |
+| 7/22/26     |                 9 |     51 |           54 |           60 |           61 | PB 15        | nan          | POWERBALL DP |
+| 7/20/26     |                 2 |      9 |           44 |           53 |           59 | PB 8         | X2           | POWERBALL    |
 
 
 
 ```python
-df_lst_raw[1]
+display_df(df_lst_raw[1])
 ```
 
 
-
-
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>Pages2/91</th>
-    </tr>
-  </thead>
-  <tbody>
-  </tbody>
-</table>
-</div>
-
+| Pages2/91   |
+|-------------|
 
 
 Thats it! `tabula` is reading the page numbers as separate table. Those can be easily excluded by filtering out using the column name
@@ -207,106 +92,17 @@ for _df in  df_lst_raw[2:]:
 
 
 ```python
-df.head()
+display_df(df.head())
 ```
 
 
-
-
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>Draw Date</th>
-      <th>Winning Numbers</th>
-      <th>Game</th>
-      <th>Unnamed: 0</th>
-      <th>Unnamed: 1</th>
-      <th>Unnamed: 2</th>
-      <th>Unnamed: 3</th>
-      <th>Unnamed: 4</th>
-      <th>Unnamed: 5</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>7/25/26</td>
-      <td>3</td>
-      <td>4</td>
-      <td>24</td>
-      <td>36</td>
-      <td>47</td>
-      <td>PB 17</td>
-      <td>X4</td>
-      <td>POWERBALL</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>7/25/26</td>
-      <td>20</td>
-      <td>21</td>
-      <td>26</td>
-      <td>28</td>
-      <td>32</td>
-      <td>PB 10</td>
-      <td>NaN</td>
-      <td>POWERBALL DP</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>7/22/26</td>
-      <td>4</td>
-      <td>5</td>
-      <td>22</td>
-      <td>50</td>
-      <td>58</td>
-      <td>PB 1</td>
-      <td>X3</td>
-      <td>POWERBALL</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>7/22/26</td>
-      <td>9</td>
-      <td>51</td>
-      <td>54</td>
-      <td>60</td>
-      <td>61</td>
-      <td>PB 15</td>
-      <td>NaN</td>
-      <td>POWERBALL DP</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>7/20/26</td>
-      <td>2</td>
-      <td>9</td>
-      <td>44</td>
-      <td>53</td>
-      <td>59</td>
-      <td>PB 8</td>
-      <td>X2</td>
-      <td>POWERBALL</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-
+| Draw Date   |   Winning Numbers |   Game |   Unnamed: 0 |   Unnamed: 1 |   Unnamed: 2 | Unnamed: 3   | Unnamed: 4   | Unnamed: 5   |
+|:------------|------------------:|-------:|-------------:|-------------:|-------------:|:-------------|:-------------|:-------------|
+| 7/25/26     |                 3 |      4 |           24 |           36 |           47 | PB 17        | X4           | POWERBALL    |
+| 7/25/26     |                20 |     21 |           26 |           28 |           32 | PB 10        | nan          | POWERBALL DP |
+| 7/22/26     |                 4 |      5 |           22 |           50 |           58 | PB 1         | X3           | POWERBALL    |
+| 7/22/26     |                 9 |     51 |           54 |           60 |           61 | PB 15        | nan          | POWERBALL DP |
+| 7/20/26     |                 2 |      9 |           44 |           53 |           59 | PB 8         | X2           | POWERBALL    |
 
 
 The column names are all messed up, lets fix them.
@@ -326,106 +122,17 @@ df = df.rename(columns = {"Draw Date": "date",
 
 
 ```python
-df.head()
+display_df(df.head())
 ```
 
 
-
-
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>date</th>
-      <th>white_ball_1</th>
-      <th>white_ball_2</th>
-      <th>white_ball_3</th>
-      <th>white_ball_4</th>
-      <th>white_ball_5</th>
-      <th>red_ball</th>
-      <th>pp_mult</th>
-      <th>game</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>7/25/26</td>
-      <td>3</td>
-      <td>4</td>
-      <td>24</td>
-      <td>36</td>
-      <td>47</td>
-      <td>PB 17</td>
-      <td>X4</td>
-      <td>POWERBALL</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>7/25/26</td>
-      <td>20</td>
-      <td>21</td>
-      <td>26</td>
-      <td>28</td>
-      <td>32</td>
-      <td>PB 10</td>
-      <td>NaN</td>
-      <td>POWERBALL DP</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>7/22/26</td>
-      <td>4</td>
-      <td>5</td>
-      <td>22</td>
-      <td>50</td>
-      <td>58</td>
-      <td>PB 1</td>
-      <td>X3</td>
-      <td>POWERBALL</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>7/22/26</td>
-      <td>9</td>
-      <td>51</td>
-      <td>54</td>
-      <td>60</td>
-      <td>61</td>
-      <td>PB 15</td>
-      <td>NaN</td>
-      <td>POWERBALL DP</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>7/20/26</td>
-      <td>2</td>
-      <td>9</td>
-      <td>44</td>
-      <td>53</td>
-      <td>59</td>
-      <td>PB 8</td>
-      <td>X2</td>
-      <td>POWERBALL</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-
+| date    |   white_ball_1 |   white_ball_2 |   white_ball_3 |   white_ball_4 |   white_ball_5 | red_ball   | pp_mult   | game         |
+|:--------|---------------:|---------------:|---------------:|---------------:|---------------:|:-----------|:----------|:-------------|
+| 7/25/26 |              3 |              4 |             24 |             36 |             47 | PB 17      | X4        | POWERBALL    |
+| 7/25/26 |             20 |             21 |             26 |             28 |             32 | PB 10      | nan       | POWERBALL DP |
+| 7/22/26 |              4 |              5 |             22 |             50 |             58 | PB 1       | X3        | POWERBALL    |
+| 7/22/26 |              9 |             51 |             54 |             60 |             61 | PB 15      | nan       | POWERBALL DP |
+| 7/20/26 |              2 |              9 |             44 |             53 |             59 | PB 8       | X2        | POWERBALL    |
 
 
 
@@ -469,112 +176,23 @@ df['pp_mult'] = pd.to_numeric(df['pp_mult'], errors="coerce").astype("Int64")
 df["date"] = pd.to_datetime(df["date"])
 ```
 
-    /tmp/ipykernel_231025/528970629.py:6: UserWarning: Could not infer format, so each element will be parsed individually, falling back to `dateutil`. To ensure parsing is consistent and as-expected, please specify a format.
+    /tmp/ipykernel_372880/528970629.py:6: UserWarning: Could not infer format, so each element will be parsed individually, falling back to `dateutil`. To ensure parsing is consistent and as-expected, please specify a format.
       df["date"] = pd.to_datetime(df["date"])
 
 
 
 ```python
-df.head()
+display_df(df.head())
 ```
 
 
-
-
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>date</th>
-      <th>white_ball_1</th>
-      <th>white_ball_2</th>
-      <th>white_ball_3</th>
-      <th>white_ball_4</th>
-      <th>white_ball_5</th>
-      <th>red_ball</th>
-      <th>pp_mult</th>
-      <th>game</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>2026-07-25</td>
-      <td>3</td>
-      <td>4</td>
-      <td>24</td>
-      <td>36</td>
-      <td>47</td>
-      <td>17</td>
-      <td>4</td>
-      <td>POWERBALL</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>2026-07-25</td>
-      <td>20</td>
-      <td>21</td>
-      <td>26</td>
-      <td>28</td>
-      <td>32</td>
-      <td>10</td>
-      <td>&lt;NA&gt;</td>
-      <td>POWERBALL DP</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>2026-07-22</td>
-      <td>4</td>
-      <td>5</td>
-      <td>22</td>
-      <td>50</td>
-      <td>58</td>
-      <td>1</td>
-      <td>3</td>
-      <td>POWERBALL</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>2026-07-22</td>
-      <td>9</td>
-      <td>51</td>
-      <td>54</td>
-      <td>60</td>
-      <td>61</td>
-      <td>15</td>
-      <td>&lt;NA&gt;</td>
-      <td>POWERBALL DP</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>2026-07-20</td>
-      <td>2</td>
-      <td>9</td>
-      <td>44</td>
-      <td>53</td>
-      <td>59</td>
-      <td>8</td>
-      <td>2</td>
-      <td>POWERBALL</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-
+| date                |   white_ball_1 |   white_ball_2 |   white_ball_3 |   white_ball_4 |   white_ball_5 |   red_ball | pp_mult   | game         |
+|:--------------------|---------------:|---------------:|---------------:|---------------:|---------------:|-----------:|:----------|:-------------|
+| 2026-07-25 00:00:00 |              3 |              4 |             24 |             36 |             47 |         17 | 4         | POWERBALL    |
+| 2026-07-25 00:00:00 |             20 |             21 |             26 |             28 |             32 |         10 | <NA>      | POWERBALL DP |
+| 2026-07-22 00:00:00 |              4 |              5 |             22 |             50 |             58 |          1 | 3         | POWERBALL    |
+| 2026-07-22 00:00:00 |              9 |             51 |             54 |             60 |             61 |         15 | <NA>      | POWERBALL DP |
+| 2026-07-20 00:00:00 |              2 |              9 |             44 |             53 |             59 |          8 | 2         | POWERBALL    |
 
 
 
@@ -628,7 +246,7 @@ assert df["red_ball"].max(axis=None) <= 26, "Red (Power) ball numbers out of ran
 
     AssertionError                            Traceback (most recent call last)
 
-    Cell In[18], line 2
+    Cell In[33], line 2
           1 assert df["red_ball"].min(axis=None) >= 1,  "Red (Power) ball numbers out of range!"
     ----> 2 assert df["red_ball"].max(axis=None) <= 26, "Red (Power) ball numbers out of range!"
 
@@ -661,318 +279,51 @@ The dataset must be split into these cases to avoid skewing the statistical resu
 ```python
 df_v5 = df[ (df["date"] >= "2009-01-07") & (df["date"] <= "2012-01-14")]
 assert df_v5["red_ball"].max(axis=None) == 39, "Power ball numbers out of range!"
-df_v5.head()
+display_df(df_v5.head())
 ```
 
 
-
-
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>date</th>
-      <th>white_ball_1</th>
-      <th>white_ball_2</th>
-      <th>white_ball_3</th>
-      <th>white_ball_4</th>
-      <th>white_ball_5</th>
-      <th>red_ball</th>
-      <th>pp_mult</th>
-      <th>game</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>2544</th>
-      <td>2012-01-14</td>
-      <td>10</td>
-      <td>30</td>
-      <td>36</td>
-      <td>38</td>
-      <td>41</td>
-      <td>1</td>
-      <td>5</td>
-      <td>POWERBALL</td>
-    </tr>
-    <tr>
-      <th>2545</th>
-      <td>2012-01-11</td>
-      <td>5</td>
-      <td>19</td>
-      <td>29</td>
-      <td>45</td>
-      <td>47</td>
-      <td>25</td>
-      <td>2</td>
-      <td>POWERBALL</td>
-    </tr>
-    <tr>
-      <th>2546</th>
-      <td>2012-01-07</td>
-      <td>3</td>
-      <td>21</td>
-      <td>24</td>
-      <td>38</td>
-      <td>39</td>
-      <td>24</td>
-      <td>5</td>
-      <td>POWERBALL</td>
-    </tr>
-    <tr>
-      <th>2547</th>
-      <td>2012-01-04</td>
-      <td>21</td>
-      <td>35</td>
-      <td>46</td>
-      <td>47</td>
-      <td>50</td>
-      <td>2</td>
-      <td>4</td>
-      <td>POWERBALL</td>
-    </tr>
-    <tr>
-      <th>2548</th>
-      <td>2011-12-31</td>
-      <td>5</td>
-      <td>23</td>
-      <td>25</td>
-      <td>28</td>
-      <td>40</td>
-      <td>34</td>
-      <td>4</td>
-      <td>POWERBALL</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-
+| date                |   white_ball_1 |   white_ball_2 |   white_ball_3 |   white_ball_4 |   white_ball_5 |   red_ball |   pp_mult | game      |
+|:--------------------|---------------:|---------------:|---------------:|---------------:|---------------:|-----------:|----------:|:----------|
+| 2012-01-14 00:00:00 |             10 |             30 |             36 |             38 |             41 |          1 |         5 | POWERBALL |
+| 2012-01-11 00:00:00 |              5 |             19 |             29 |             45 |             47 |         25 |         2 | POWERBALL |
+| 2012-01-07 00:00:00 |              3 |             21 |             24 |             38 |             39 |         24 |         5 | POWERBALL |
+| 2012-01-04 00:00:00 |             21 |             35 |             46 |             47 |             50 |          2 |         4 | POWERBALL |
+| 2011-12-31 00:00:00 |              5 |             23 |             25 |             28 |             40 |         34 |         4 | POWERBALL |
 
 
 
 ```python
 df_v6 = df[ (df["date"] >= "2012-01-18") & (df["date"] <= "2015-10-03")]
 assert df_v6["red_ball"].max(axis=None) == 35, "Power ball numbers out of range!"
-df_v6.head()
+display_df(df_v6.head())
 ```
 
 
-
-
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>date</th>
-      <th>white_ball_1</th>
-      <th>white_ball_2</th>
-      <th>white_ball_3</th>
-      <th>white_ball_4</th>
-      <th>white_ball_5</th>
-      <th>red_ball</th>
-      <th>pp_mult</th>
-      <th>game</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>2156</th>
-      <td>2015-10-03</td>
-      <td>6</td>
-      <td>26</td>
-      <td>33</td>
-      <td>44</td>
-      <td>46</td>
-      <td>4</td>
-      <td>2</td>
-      <td>POWERBALL</td>
-    </tr>
-    <tr>
-      <th>2157</th>
-      <td>2015-09-30</td>
-      <td>21</td>
-      <td>39</td>
-      <td>40</td>
-      <td>55</td>
-      <td>59</td>
-      <td>17</td>
-      <td>3</td>
-      <td>POWERBALL</td>
-    </tr>
-    <tr>
-      <th>2158</th>
-      <td>2015-09-26</td>
-      <td>23</td>
-      <td>31</td>
-      <td>42</td>
-      <td>50</td>
-      <td>57</td>
-      <td>5</td>
-      <td>3</td>
-      <td>POWERBALL</td>
-    </tr>
-    <tr>
-      <th>2159</th>
-      <td>2015-09-23</td>
-      <td>8</td>
-      <td>29</td>
-      <td>41</td>
-      <td>51</td>
-      <td>58</td>
-      <td>5</td>
-      <td>2</td>
-      <td>POWERBALL</td>
-    </tr>
-    <tr>
-      <th>2160</th>
-      <td>2015-09-19</td>
-      <td>12</td>
-      <td>17</td>
-      <td>26</td>
-      <td>43</td>
-      <td>48</td>
-      <td>24</td>
-      <td>2</td>
-      <td>POWERBALL</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-
+| date                |   white_ball_1 |   white_ball_2 |   white_ball_3 |   white_ball_4 |   white_ball_5 |   red_ball |   pp_mult | game      |
+|:--------------------|---------------:|---------------:|---------------:|---------------:|---------------:|-----------:|----------:|:----------|
+| 2015-10-03 00:00:00 |              6 |             26 |             33 |             44 |             46 |          4 |         2 | POWERBALL |
+| 2015-09-30 00:00:00 |             21 |             39 |             40 |             55 |             59 |         17 |         3 | POWERBALL |
+| 2015-09-26 00:00:00 |             23 |             31 |             42 |             50 |             57 |          5 |         3 | POWERBALL |
+| 2015-09-23 00:00:00 |              8 |             29 |             41 |             51 |             58 |          5 |         2 | POWERBALL |
+| 2015-09-19 00:00:00 |             12 |             17 |             26 |             43 |             48 |         24 |         2 | POWERBALL |
 
 
 
 ```python
 df_v7 = df[df["date"] >= "2015-10-07"]
 assert df_v7["red_ball"].max(axis=None) == 26, "Power ball numbers out of range!"
-df_v7.head()
+display_df(df_v7.head())
 ```
 
 
-
-
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>date</th>
-      <th>white_ball_1</th>
-      <th>white_ball_2</th>
-      <th>white_ball_3</th>
-      <th>white_ball_4</th>
-      <th>white_ball_5</th>
-      <th>red_ball</th>
-      <th>pp_mult</th>
-      <th>game</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>2026-07-25</td>
-      <td>3</td>
-      <td>4</td>
-      <td>24</td>
-      <td>36</td>
-      <td>47</td>
-      <td>17</td>
-      <td>4</td>
-      <td>POWERBALL</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>2026-07-25</td>
-      <td>20</td>
-      <td>21</td>
-      <td>26</td>
-      <td>28</td>
-      <td>32</td>
-      <td>10</td>
-      <td>&lt;NA&gt;</td>
-      <td>POWERBALL DP</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>2026-07-22</td>
-      <td>4</td>
-      <td>5</td>
-      <td>22</td>
-      <td>50</td>
-      <td>58</td>
-      <td>1</td>
-      <td>3</td>
-      <td>POWERBALL</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>2026-07-22</td>
-      <td>9</td>
-      <td>51</td>
-      <td>54</td>
-      <td>60</td>
-      <td>61</td>
-      <td>15</td>
-      <td>&lt;NA&gt;</td>
-      <td>POWERBALL DP</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>2026-07-20</td>
-      <td>2</td>
-      <td>9</td>
-      <td>44</td>
-      <td>53</td>
-      <td>59</td>
-      <td>8</td>
-      <td>2</td>
-      <td>POWERBALL</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-
+| date                |   white_ball_1 |   white_ball_2 |   white_ball_3 |   white_ball_4 |   white_ball_5 |   red_ball | pp_mult   | game         |
+|:--------------------|---------------:|---------------:|---------------:|---------------:|---------------:|-----------:|:----------|:-------------|
+| 2026-07-25 00:00:00 |              3 |              4 |             24 |             36 |             47 |         17 | 4         | POWERBALL    |
+| 2026-07-25 00:00:00 |             20 |             21 |             26 |             28 |             32 |         10 | <NA>      | POWERBALL DP |
+| 2026-07-22 00:00:00 |              4 |              5 |             22 |             50 |             58 |          1 | 3         | POWERBALL    |
+| 2026-07-22 00:00:00 |              9 |             51 |             54 |             60 |             61 |         15 | <NA>      | POWERBALL DP |
+| 2026-07-20 00:00:00 |              2 |              9 |             44 |             53 |             59 |          8 | 2         | POWERBALL    |
 
 
 
@@ -1011,210 +362,32 @@ df_v7_dp = df_v7[ df_v7["game"] == "POWERBALL DP" ]
 
 
 ```python
-df_v7_pb.head()
+display_df(df_v7_pb.head())
 ```
 
 
-
-
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>date</th>
-      <th>white_ball_1</th>
-      <th>white_ball_2</th>
-      <th>white_ball_3</th>
-      <th>white_ball_4</th>
-      <th>white_ball_5</th>
-      <th>red_ball</th>
-      <th>pp_mult</th>
-      <th>game</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>2026-07-25</td>
-      <td>3</td>
-      <td>4</td>
-      <td>24</td>
-      <td>36</td>
-      <td>47</td>
-      <td>17</td>
-      <td>4</td>
-      <td>POWERBALL</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>2026-07-22</td>
-      <td>4</td>
-      <td>5</td>
-      <td>22</td>
-      <td>50</td>
-      <td>58</td>
-      <td>1</td>
-      <td>3</td>
-      <td>POWERBALL</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>2026-07-20</td>
-      <td>2</td>
-      <td>9</td>
-      <td>44</td>
-      <td>53</td>
-      <td>59</td>
-      <td>8</td>
-      <td>2</td>
-      <td>POWERBALL</td>
-    </tr>
-    <tr>
-      <th>6</th>
-      <td>2026-07-18</td>
-      <td>9</td>
-      <td>14</td>
-      <td>44</td>
-      <td>50</td>
-      <td>56</td>
-      <td>3</td>
-      <td>4</td>
-      <td>POWERBALL</td>
-    </tr>
-    <tr>
-      <th>8</th>
-      <td>2026-07-15</td>
-      <td>2</td>
-      <td>7</td>
-      <td>18</td>
-      <td>29</td>
-      <td>38</td>
-      <td>16</td>
-      <td>2</td>
-      <td>POWERBALL</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-
+| date                |   white_ball_1 |   white_ball_2 |   white_ball_3 |   white_ball_4 |   white_ball_5 |   red_ball |   pp_mult | game      |
+|:--------------------|---------------:|---------------:|---------------:|---------------:|---------------:|-----------:|----------:|:----------|
+| 2026-07-25 00:00:00 |              3 |              4 |             24 |             36 |             47 |         17 |         4 | POWERBALL |
+| 2026-07-22 00:00:00 |              4 |              5 |             22 |             50 |             58 |          1 |         3 | POWERBALL |
+| 2026-07-20 00:00:00 |              2 |              9 |             44 |             53 |             59 |          8 |         2 | POWERBALL |
+| 2026-07-18 00:00:00 |              9 |             14 |             44 |             50 |             56 |          3 |         4 | POWERBALL |
+| 2026-07-15 00:00:00 |              2 |              7 |             18 |             29 |             38 |         16 |         2 | POWERBALL |
 
 
 
 ```python
-df_v7_dp.head()
+display_df(df_v7_dp.head())
 ```
 
 
-
-
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>date</th>
-      <th>white_ball_1</th>
-      <th>white_ball_2</th>
-      <th>white_ball_3</th>
-      <th>white_ball_4</th>
-      <th>white_ball_5</th>
-      <th>red_ball</th>
-      <th>pp_mult</th>
-      <th>game</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>1</th>
-      <td>2026-07-25</td>
-      <td>20</td>
-      <td>21</td>
-      <td>26</td>
-      <td>28</td>
-      <td>32</td>
-      <td>10</td>
-      <td>&lt;NA&gt;</td>
-      <td>POWERBALL DP</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>2026-07-22</td>
-      <td>9</td>
-      <td>51</td>
-      <td>54</td>
-      <td>60</td>
-      <td>61</td>
-      <td>15</td>
-      <td>&lt;NA&gt;</td>
-      <td>POWERBALL DP</td>
-    </tr>
-    <tr>
-      <th>5</th>
-      <td>2026-07-20</td>
-      <td>15</td>
-      <td>21</td>
-      <td>39</td>
-      <td>54</td>
-      <td>67</td>
-      <td>7</td>
-      <td>&lt;NA&gt;</td>
-      <td>POWERBALL DP</td>
-    </tr>
-    <tr>
-      <th>7</th>
-      <td>2026-07-18</td>
-      <td>5</td>
-      <td>11</td>
-      <td>25</td>
-      <td>26</td>
-      <td>64</td>
-      <td>11</td>
-      <td>&lt;NA&gt;</td>
-      <td>POWERBALL DP</td>
-    </tr>
-    <tr>
-      <th>9</th>
-      <td>2026-07-15</td>
-      <td>14</td>
-      <td>15</td>
-      <td>23</td>
-      <td>33</td>
-      <td>42</td>
-      <td>16</td>
-      <td>&lt;NA&gt;</td>
-      <td>POWERBALL DP</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-
+| date                |   white_ball_1 |   white_ball_2 |   white_ball_3 |   white_ball_4 |   white_ball_5 |   red_ball | pp_mult   | game         |
+|:--------------------|---------------:|---------------:|---------------:|---------------:|---------------:|-----------:|:----------|:-------------|
+| 2026-07-25 00:00:00 |             20 |             21 |             26 |             28 |             32 |         10 | <NA>      | POWERBALL DP |
+| 2026-07-22 00:00:00 |              9 |             51 |             54 |             60 |             61 |         15 | <NA>      | POWERBALL DP |
+| 2026-07-20 00:00:00 |             15 |             21 |             39 |             54 |             67 |          7 | <NA>      | POWERBALL DP |
+| 2026-07-18 00:00:00 |              5 |             11 |             25 |             26 |             64 |         11 | <NA>      | POWERBALL DP |
+| 2026-07-15 00:00:00 |             14 |             15 |             23 |             33 |             42 |         16 | <NA>      | POWERBALL DP |
 
 
 This concludes the data preparation step.
@@ -1644,82 +817,17 @@ results_df = pd.DataFrame(results_dict)
 
 
 ```python
-results_df.head()
+display_df(results_df.head())
 ```
 
 
-
-
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>draw_version</th>
-      <th>ball_color</th>
-      <th>n_draws</th>
-      <th>chi_sq</th>
-      <th>p_value</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>v5</td>
-      <td>white</td>
-      <td>304</td>
-      <td>79.132895</td>
-      <td>0.013399</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>v5</td>
-      <td>red</td>
-      <td>304</td>
-      <td>38.276316</td>
-      <td>0.457054</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>v6</td>
-      <td>white</td>
-      <td>388</td>
-      <td>37.108247</td>
-      <td>0.970603</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>v6</td>
-      <td>red</td>
-      <td>388</td>
-      <td>32.541237</td>
-      <td>0.543246</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>v7_pb</td>
-      <td>white</td>
-      <td>1385</td>
-      <td>81.324765</td>
-      <td>0.069293</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-
+| draw_version   | ball_color   |   n_draws |   chi_sq |   p_value |
+|:---------------|:-------------|----------:|---------:|----------:|
+| v5             | white        |       304 |  79.1329 | 0.0133987 |
+| v5             | red          |       304 |  38.2763 | 0.457054  |
+| v6             | white        |       388 |  37.1082 | 0.970603  |
+| v6             | red          |       388 |  32.5412 | 0.543246  |
+| v7_pb          | white        |      1385 |  81.3248 | 0.0692931 |
 
 
 
@@ -1748,124 +856,20 @@ reject, pvals, _, _ = multipletests(pvals=results_df["p_value"].to_numpy(),
 results_df["p_value_holm"] = pvals
 results_df["reject_null"] = reject
 
-results_df.head(10)
+display_df(results_df.head(10))
 ```
 
 
-
-
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>draw_version</th>
-      <th>ball_color</th>
-      <th>n_draws</th>
-      <th>chi_sq</th>
-      <th>p_value</th>
-      <th>p_value_holm</th>
-      <th>reject_null</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>v5</td>
-      <td>white</td>
-      <td>304</td>
-      <td>79.132895</td>
-      <td>0.013399</td>
-      <td>0.107189</td>
-      <td>False</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>v5</td>
-      <td>red</td>
-      <td>304</td>
-      <td>38.276316</td>
-      <td>0.457054</td>
-      <td>1.000000</td>
-      <td>False</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>v6</td>
-      <td>white</td>
-      <td>388</td>
-      <td>37.108247</td>
-      <td>0.970603</td>
-      <td>1.000000</td>
-      <td>False</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>v6</td>
-      <td>red</td>
-      <td>388</td>
-      <td>32.541237</td>
-      <td>0.543246</td>
-      <td>1.000000</td>
-      <td>False</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>v7_pb</td>
-      <td>white</td>
-      <td>1385</td>
-      <td>81.324765</td>
-      <td>0.069293</td>
-      <td>0.485051</td>
-      <td>False</td>
-    </tr>
-    <tr>
-      <th>5</th>
-      <td>v7_pb</td>
-      <td>red</td>
-      <td>1385</td>
-      <td>23.599278</td>
-      <td>0.543946</td>
-      <td>1.000000</td>
-      <td>False</td>
-    </tr>
-    <tr>
-      <th>6</th>
-      <td>v7_dp</td>
-      <td>white</td>
-      <td>771</td>
-      <td>70.876265</td>
-      <td>0.260774</td>
-      <td>1.000000</td>
-      <td>False</td>
-    </tr>
-    <tr>
-      <th>7</th>
-      <td>v7_dp</td>
-      <td>red</td>
-      <td>771</td>
-      <td>21.511025</td>
-      <td>0.665533</td>
-      <td>1.000000</td>
-      <td>False</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-
+| draw_version   | ball_color   |   n_draws |   chi_sq |   p_value |   p_value_holm | reject_null   |
+|:---------------|:-------------|----------:|---------:|----------:|---------------:|:--------------|
+| v5             | white        |       304 |  79.1329 | 0.0133987 |       0.107189 | False         |
+| v5             | red          |       304 |  38.2763 | 0.457054  |       1        | False         |
+| v6             | white        |       388 |  37.1082 | 0.970603  |       1        | False         |
+| v6             | red          |       388 |  32.5412 | 0.543246  |       1        | False         |
+| v7_pb          | white        |      1385 |  81.3248 | 0.0692931 |       0.485051 | False         |
+| v7_pb          | red          |      1385 |  23.5993 | 0.543946  |       1        | False         |
+| v7_dp          | white        |       771 |  70.8763 | 0.260774  |       1        | False         |
+| v7_dp          | red          |       771 |  21.511  | 0.665533  |       1        | False         |
 
 
 # Conclusion
