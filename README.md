@@ -8,6 +8,7 @@ import numpy as np
 from scipy.stats import chisquare, monte_carlo_test
 from statsmodels.stats.multitest import multipletests
 from IPython.display import Markdown, display
+from scipy.stats import chi2
 
 def display_df(df):
     display(Markdown(df.to_markdown(index=False)))
@@ -35,7 +36,7 @@ The historical drawing results used in this analysis are available from the [Flo
 
       % Total    % Received % Xferd  Average Speed  Time    Time    Time   Current
                                      Dload  Upload  Total   Spent   Left   Speed
-    100 729.9k 100 729.9k   0      0  1.57M      0                              0
+    100 731.1k 100 731.1k   0      0  1.17M      0                              0
 
 
 
@@ -43,6 +44,10 @@ The historical drawing results used in this analysis are available from the [Flo
 # ignore first page ==> additional content creates a parsing problems
 df_lst_raw = tabula.read_pdf("pb.pdf", pages="2-90")
 ```
+
+    Failed to import jpype dependencies. Fallback to subprocess.
+    No module named 'jpype'
+
 
 
 ```python
@@ -63,11 +68,11 @@ display_df(df_lst_raw[0].head())
 
 | Draw Date   |   Winning Numbers |   Game |   Unnamed: 0 |   Unnamed: 1 |   Unnamed: 2 | Unnamed: 3   | Unnamed: 4   | Unnamed: 5   |
 |:------------|------------------:|-------:|-------------:|-------------:|-------------:|:-------------|:-------------|:-------------|
+| 7/29/26     |                30 |     36 |           40 |           42 |           57 | PB 2         | X2           | POWERBALL    |
+| 7/29/26     |                24 |     37 |           40 |           51 |           55 | PB 5         | nan          | POWERBALL DP |
+| 7/27/26     |                 6 |     26 |           46 |           58 |           65 | PB 25        | X2           | POWERBALL    |
+| 7/27/26     |                17 |     25 |           59 |           61 |           69 | PB 14        | nan          | POWERBALL DP |
 | 7/25/26     |                 3 |      4 |           24 |           36 |           47 | PB 17        | X4           | POWERBALL    |
-| 7/25/26     |                20 |     21 |           26 |           28 |           32 | PB 10        | nan          | POWERBALL DP |
-| 7/22/26     |                 4 |      5 |           22 |           50 |           58 | PB 1         | X3           | POWERBALL    |
-| 7/22/26     |                 9 |     51 |           54 |           60 |           61 | PB 15        | nan          | POWERBALL DP |
-| 7/20/26     |                 2 |      9 |           44 |           53 |           59 | PB 8         | X2           | POWERBALL    |
 
 
 
@@ -98,11 +103,11 @@ display_df(df.head())
 
 | Draw Date   |   Winning Numbers |   Game |   Unnamed: 0 |   Unnamed: 1 |   Unnamed: 2 | Unnamed: 3   | Unnamed: 4   | Unnamed: 5   |
 |:------------|------------------:|-------:|-------------:|-------------:|-------------:|:-------------|:-------------|:-------------|
+| 7/29/26     |                30 |     36 |           40 |           42 |           57 | PB 2         | X2           | POWERBALL    |
+| 7/29/26     |                24 |     37 |           40 |           51 |           55 | PB 5         | nan          | POWERBALL DP |
+| 7/27/26     |                 6 |     26 |           46 |           58 |           65 | PB 25        | X2           | POWERBALL    |
+| 7/27/26     |                17 |     25 |           59 |           61 |           69 | PB 14        | nan          | POWERBALL DP |
 | 7/25/26     |                 3 |      4 |           24 |           36 |           47 | PB 17        | X4           | POWERBALL    |
-| 7/25/26     |                20 |     21 |           26 |           28 |           32 | PB 10        | nan          | POWERBALL DP |
-| 7/22/26     |                 4 |      5 |           22 |           50 |           58 | PB 1         | X3           | POWERBALL    |
-| 7/22/26     |                 9 |     51 |           54 |           60 |           61 | PB 15        | nan          | POWERBALL DP |
-| 7/20/26     |                 2 |      9 |           44 |           53 |           59 | PB 8         | X2           | POWERBALL    |
 
 
 The column names are all messed up, lets fix them.
@@ -128,11 +133,11 @@ display_df(df.head())
 
 | date    |   white_ball_1 |   white_ball_2 |   white_ball_3 |   white_ball_4 |   white_ball_5 | red_ball   | pp_mult   | game         |
 |:--------|---------------:|---------------:|---------------:|---------------:|---------------:|:-----------|:----------|:-------------|
+| 7/29/26 |             30 |             36 |             40 |             42 |             57 | PB 2       | X2        | POWERBALL    |
+| 7/29/26 |             24 |             37 |             40 |             51 |             55 | PB 5       | nan       | POWERBALL DP |
+| 7/27/26 |              6 |             26 |             46 |             58 |             65 | PB 25      | X2        | POWERBALL    |
+| 7/27/26 |             17 |             25 |             59 |             61 |             69 | PB 14      | nan       | POWERBALL DP |
 | 7/25/26 |              3 |              4 |             24 |             36 |             47 | PB 17      | X4        | POWERBALL    |
-| 7/25/26 |             20 |             21 |             26 |             28 |             32 | PB 10      | nan       | POWERBALL DP |
-| 7/22/26 |              4 |              5 |             22 |             50 |             58 | PB 1       | X3        | POWERBALL    |
-| 7/22/26 |              9 |             51 |             54 |             60 |             61 | PB 15      | nan       | POWERBALL DP |
-| 7/20/26 |              2 |              9 |             44 |             53 |             59 | PB 8       | X2        | POWERBALL    |
 
 
 
@@ -152,7 +157,7 @@ df.info()
      4   white_ball_4  2848 non-null   int64
      5   white_ball_5  2848 non-null   int64
      6   red_ball      2848 non-null   str  
-     7   pp_mult       2077 non-null   str  
+     7   pp_mult       2075 non-null   str  
      8   game          2848 non-null   str  
     dtypes: int64(5), str(4)
     memory usage: 200.4 KB
@@ -176,7 +181,7 @@ df['pp_mult'] = pd.to_numeric(df['pp_mult'], errors="coerce").astype("Int64")
 df["date"] = pd.to_datetime(df["date"])
 ```
 
-    /tmp/ipykernel_372880/528970629.py:6: UserWarning: Could not infer format, so each element will be parsed individually, falling back to `dateutil`. To ensure parsing is consistent and as-expected, please specify a format.
+    /tmp/ipykernel_1389763/528970629.py:6: UserWarning: Could not infer format, so each element will be parsed individually, falling back to `dateutil`. To ensure parsing is consistent and as-expected, please specify a format.
       df["date"] = pd.to_datetime(df["date"])
 
 
@@ -188,11 +193,11 @@ display_df(df.head())
 
 | date                |   white_ball_1 |   white_ball_2 |   white_ball_3 |   white_ball_4 |   white_ball_5 |   red_ball | pp_mult   | game         |
 |:--------------------|---------------:|---------------:|---------------:|---------------:|---------------:|-----------:|:----------|:-------------|
+| 2026-07-29 00:00:00 |             30 |             36 |             40 |             42 |             57 |          2 | 2         | POWERBALL    |
+| 2026-07-29 00:00:00 |             24 |             37 |             40 |             51 |             55 |          5 | <NA>      | POWERBALL DP |
+| 2026-07-27 00:00:00 |              6 |             26 |             46 |             58 |             65 |         25 | 2         | POWERBALL    |
+| 2026-07-27 00:00:00 |             17 |             25 |             59 |             61 |             69 |         14 | <NA>      | POWERBALL DP |
 | 2026-07-25 00:00:00 |              3 |              4 |             24 |             36 |             47 |         17 | 4         | POWERBALL    |
-| 2026-07-25 00:00:00 |             20 |             21 |             26 |             28 |             32 |         10 | <NA>      | POWERBALL DP |
-| 2026-07-22 00:00:00 |              4 |              5 |             22 |             50 |             58 |          1 | 3         | POWERBALL    |
-| 2026-07-22 00:00:00 |              9 |             51 |             54 |             60 |             61 |         15 | <NA>      | POWERBALL DP |
-| 2026-07-20 00:00:00 |              2 |              9 |             44 |             53 |             59 |          8 | 2         | POWERBALL    |
 
 
 
@@ -212,7 +217,7 @@ df.info()
      4   white_ball_4  2848 non-null   int64         
      5   white_ball_5  2848 non-null   int64         
      6   red_ball      2848 non-null   int64         
-     7   pp_mult       2077 non-null   Int64         
+     7   pp_mult       2075 non-null   Int64         
      8   game          2848 non-null   str           
     dtypes: Int64(1), datetime64[us](1), int64(6), str(1)
     memory usage: 203.2 KB
@@ -246,7 +251,7 @@ assert df["red_ball"].max(axis=None) <= 26, "Red (Power) ball numbers out of ran
 
     AssertionError                            Traceback (most recent call last)
 
-    Cell In[33], line 2
+    Cell In[18], line 2
           1 assert df["red_ball"].min(axis=None) >= 1,  "Red (Power) ball numbers out of range!"
     ----> 2 assert df["red_ball"].max(axis=None) <= 26, "Red (Power) ball numbers out of range!"
 
@@ -319,11 +324,11 @@ display_df(df_v7.head())
 
 | date                |   white_ball_1 |   white_ball_2 |   white_ball_3 |   white_ball_4 |   white_ball_5 |   red_ball | pp_mult   | game         |
 |:--------------------|---------------:|---------------:|---------------:|---------------:|---------------:|-----------:|:----------|:-------------|
+| 2026-07-29 00:00:00 |             30 |             36 |             40 |             42 |             57 |          2 | 2         | POWERBALL    |
+| 2026-07-29 00:00:00 |             24 |             37 |             40 |             51 |             55 |          5 | <NA>      | POWERBALL DP |
+| 2026-07-27 00:00:00 |              6 |             26 |             46 |             58 |             65 |         25 | 2         | POWERBALL    |
+| 2026-07-27 00:00:00 |             17 |             25 |             59 |             61 |             69 |         14 | <NA>      | POWERBALL DP |
 | 2026-07-25 00:00:00 |              3 |              4 |             24 |             36 |             47 |         17 | 4         | POWERBALL    |
-| 2026-07-25 00:00:00 |             20 |             21 |             26 |             28 |             32 |         10 | <NA>      | POWERBALL DP |
-| 2026-07-22 00:00:00 |              4 |              5 |             22 |             50 |             58 |          1 | 3         | POWERBALL    |
-| 2026-07-22 00:00:00 |              9 |             51 |             54 |             60 |             61 |         15 | <NA>      | POWERBALL DP |
-| 2026-07-20 00:00:00 |              2 |              9 |             44 |             53 |             59 |          8 | 2         | POWERBALL    |
 
 
 
@@ -368,11 +373,11 @@ display_df(df_v7_pb.head())
 
 | date                |   white_ball_1 |   white_ball_2 |   white_ball_3 |   white_ball_4 |   white_ball_5 |   red_ball |   pp_mult | game      |
 |:--------------------|---------------:|---------------:|---------------:|---------------:|---------------:|-----------:|----------:|:----------|
+| 2026-07-29 00:00:00 |             30 |             36 |             40 |             42 |             57 |          2 |         2 | POWERBALL |
+| 2026-07-27 00:00:00 |              6 |             26 |             46 |             58 |             65 |         25 |         2 | POWERBALL |
 | 2026-07-25 00:00:00 |              3 |              4 |             24 |             36 |             47 |         17 |         4 | POWERBALL |
 | 2026-07-22 00:00:00 |              4 |              5 |             22 |             50 |             58 |          1 |         3 | POWERBALL |
 | 2026-07-20 00:00:00 |              2 |              9 |             44 |             53 |             59 |          8 |         2 | POWERBALL |
-| 2026-07-18 00:00:00 |              9 |             14 |             44 |             50 |             56 |          3 |         4 | POWERBALL |
-| 2026-07-15 00:00:00 |              2 |              7 |             18 |             29 |             38 |         16 |         2 | POWERBALL |
 
 
 
@@ -383,11 +388,11 @@ display_df(df_v7_dp.head())
 
 | date                |   white_ball_1 |   white_ball_2 |   white_ball_3 |   white_ball_4 |   white_ball_5 |   red_ball | pp_mult   | game         |
 |:--------------------|---------------:|---------------:|---------------:|---------------:|---------------:|-----------:|:----------|:-------------|
+| 2026-07-29 00:00:00 |             24 |             37 |             40 |             51 |             55 |          5 | <NA>      | POWERBALL DP |
+| 2026-07-27 00:00:00 |             17 |             25 |             59 |             61 |             69 |         14 | <NA>      | POWERBALL DP |
 | 2026-07-25 00:00:00 |             20 |             21 |             26 |             28 |             32 |         10 | <NA>      | POWERBALL DP |
 | 2026-07-22 00:00:00 |              9 |             51 |             54 |             60 |             61 |         15 | <NA>      | POWERBALL DP |
 | 2026-07-20 00:00:00 |             15 |             21 |             39 |             54 |             67 |          7 | <NA>      | POWERBALL DP |
-| 2026-07-18 00:00:00 |              5 |             11 |             25 |             26 |             64 |         11 | <NA>      | POWERBALL DP |
-| 2026-07-15 00:00:00 |             14 |             15 |             23 |             33 |             42 |         16 | <NA>      | POWERBALL DP |
 
 
 This concludes the data preparation step.
@@ -476,10 +481,10 @@ print(f"Version 7 - Powerball drawings: {len(df_v7_pb)}")
 print(f"Version 7 - Powerball drawings: {len(df_v7_dp)}")
 ```
 
-    Version 5 drawings: 304
+    Version 5 drawings: 300
     Version 6 drawings: 388
-    Version 7 - Powerball drawings: 1385
-    Version 7 - Powerball drawings: 771
+    Version 7 - Powerball drawings: 1387
+    Version 7 - Powerball drawings: 773
 
 
 Visual inspection is a good starting point, but it alone cannot tell us whether the differences in the histograms represent real nonuniformity or ordinary random variation. This is especially important here because the categories contain different numbers of drawings. Categories with fewer drawings will naturally produce noisier-looking histograms.
@@ -823,11 +828,11 @@ display_df(results_df.head())
 
 | draw_version   | ball_color   |   n_draws |   chi_sq |   p_value |
 |:---------------|:-------------|----------:|---------:|----------:|
-| v5             | white        |       304 |  79.1329 | 0.0133987 |
-| v5             | red          |       304 |  38.2763 | 0.457054  |
-| v6             | white        |       388 |  37.1082 | 0.970603  |
-| v6             | red          |       388 |  32.5412 | 0.543246  |
-| v7_pb          | white        |      1385 |  81.3248 | 0.0692931 |
+| v5             | white        |       300 |  78.7613 | 0.0131987 |
+| v5             | red          |       300 |  36.7    | 0.531047  |
+| v6             | white        |       388 |  37.1082 | 0.968903  |
+| v6             | red          |       388 |  32.5412 | 0.537146  |
+| v7_pb          | white        |      1387 |  80.3449 | 0.0756924 |
 
 
 
@@ -862,17 +867,123 @@ display_df(results_df.head(10))
 
 | draw_version   | ball_color   |   n_draws |   chi_sq |   p_value |   p_value_holm | reject_null   |
 |:---------------|:-------------|----------:|---------:|----------:|---------------:|:--------------|
-| v5             | white        |       304 |  79.1329 | 0.0133987 |       0.107189 | False         |
-| v5             | red          |       304 |  38.2763 | 0.457054  |       1        | False         |
-| v6             | white        |       388 |  37.1082 | 0.970603  |       1        | False         |
-| v6             | red          |       388 |  32.5412 | 0.543246  |       1        | False         |
-| v7_pb          | white        |      1385 |  81.3248 | 0.0692931 |       0.485051 | False         |
-| v7_pb          | red          |      1385 |  23.5993 | 0.543946  |       1        | False         |
-| v7_dp          | white        |       771 |  70.8763 | 0.260774  |       1        | False         |
-| v7_dp          | red          |       771 |  21.511  | 0.665533  |       1        | False         |
+| v5             | white        |       300 |  78.7613 | 0.0131987 |       0.105589 | False         |
+| v5             | red          |       300 |  36.7    | 0.531047  |       1        | False         |
+| v6             | white        |       388 |  37.1082 | 0.968903  |       1        | False         |
+| v6             | red          |       388 |  32.5412 | 0.537146  |       1        | False         |
+| v7_pb          | white        |      1387 |  80.3449 | 0.0756924 |       0.529847 | False         |
+| v7_pb          | red          |      1387 |  23.7671 | 0.537446  |       1        | False         |
+| v7_dp          | white        |       773 |  71.0349 | 0.252375  |       1        | False         |
+| v7_dp          | red          |       773 |  22.304  | 0.617938  |       1        | False         |
 
 
 # Conclusion
 
 Version 5 white balls showed the largest departure from uniformity, with $\chi^2=79.13$ and an unadjusted p-value of $0.013$. However, after accounting for all eight comparisons using the Holm correction, its adjusted p-value increased to $0.107$. None of the eight adjusted p-values was below the significance level of $0.05$, so the null hypothesis was not rejected for any distribution. Overall, the results do not provide statistically significant evidence that any of the ball distributions differs from the fair-drawing model.
 
+
+# Appendix
+
+In the previous analysis, we performed a MC hypothesis test on the distributions of both the red and white ball draws instead of applying the standard Pearson’s chi-square test directly. As previously discussed, the standard analytical test is valid for the red ball draws, but not for the white balls. This is because the white balls are drawn without replacement, which violates the core assumption of independent observations. To see how much this violation impacts our results, we can look at how much the p-values change when using the standard analytical chi-square test. We expect the analytical p-values for the red ball draws to be nearly identical to those calculated via MC simulation. Conversely, we expect to see a notable discrepancy for the white ball draws. Let's see if this is the case.
+
+
+```python
+res = { "draw_version":[],
+         "ball_color":[], 
+         "chi_sq": [],
+         "p_value": [],}
+
+for version, df, n_white, n_red in datasets:
+    
+    observed_values = df[white_ball_cols].to_numpy(dtype=int).flatten()
+    observed_counts = np.bincount(observed_values, minlength = n_white +1)[1:]
+
+    _ = chisquare(observed_counts)
+    res["draw_version"].append(version)
+    res["ball_color"].append("white")
+    res["chi_sq"].append(_.statistic)
+    res["p_value"].append(_.pvalue)
+
+    observed_values = df["red_ball"].to_numpy(dtype=int).flatten()
+    observed_counts = np.bincount(observed_values, minlength = n_red +1)[1:]
+
+    _ = chisquare(observed_counts)
+    res["draw_version"].append(version)
+    res["ball_color"].append("red")
+    res["chi_sq"].append(_.statistic)
+    res["p_value"].append(_.pvalue)
+```
+
+
+```python
+stat_ratios = pd.DataFrame(res)
+stat_ratios["p_value_ratio"] = stat_ratios["p_value"]/results_df["p_value"]
+stat_ratios["chi_sq_ratio"] = stat_ratios["chi_sq"]/results_df["chi_sq"]
+display_df(stat_ratios[["draw_version", "ball_color", "chi_sq_ratio", "p_value_ratio"]])
+```
+
+
+| draw_version   | ball_color   |   chi_sq_ratio |   p_value_ratio |
+|:---------------|:-------------|---------------:|----------------:|
+| v5             | white        |              1 |        2.74309  |
+| v5             | red          |              1 |        0.99713  |
+| v6             | white        |              1 |        1.01679  |
+| v6             | red          |              1 |        1.0037   |
+| v7_pb          | white        |              1 |        1.91924  |
+| v7_pb          | red          |              1 |        0.991467 |
+| v7_dp          | white        |              1 |        1.49366  |
+| v7_dp          | red          |              1 |        1.00032  |
+
+
+The table above shows the ratios between the p-values calculated via the standard chi-square test and those computed via MC simulations. As expected, the ratios for the red ball draws are very close to unity. However, the p-values for the white ball draws are always considerably larger when computed using the standard chi-square test, which could lead to wrong conclusions about the null hypothesis. Now, let's look at how the empirical and theoretical distributions compare visually.
+
+
+```python
+fig, axes = plt.subplots(1,2,figsize=(10, 4),layout="constrained")
+
+mc_statistics = results_mc_test[0][2].null_distribution
+x_min = mc_statistics.min() - 5
+x_max = mc_statistics.max() + 5
+x = np.linspace(x_min, x_max, 500)
+
+df = 59-1
+# Calculate the theoretical Chi-Square PDF
+theoretical_pdf = chi2.pdf(x, df=df)
+
+
+axes[0].hist(mc_statistics, bins=50, density=True, alpha=0.6, color='skyblue', label='MC (Empirical)')
+
+axes[0].plot(x, theoretical_pdf, 'r-', lw=2.5, label=f'Theoretical $\chi^2$ (df={df})')
+axes[0].set_title("v5 - white balls", fontsize=14)
+axes[0].set_xlabel('$\chi^2$', fontsize=12)
+axes[0].set_ylabel("PDF", fontsize=12)
+axes[0].legend(fontsize=11)
+
+#=======================================================================
+
+mc_statistics = results_mc_test[1][2].null_distribution
+x_min = mc_statistics.min() - 5
+x_max = mc_statistics.max() + 5
+x = np.linspace(x_min, x_max, 500)
+
+df = 39-1
+theoretical_pdf = chi2.pdf(x, df=38)
+# Plot the Monte Carlo simulation empirical distribution
+axes[1].hist(mc_statistics, bins=50, density=True, alpha=0.6, color='skyblue', label='MC (Empirical)')
+
+# Plot the standard analytical Chi-Square curve
+axes[1].plot(x, theoretical_pdf, 'r-', lw=2.5, label=f'Theoretical $\chi^2$ (df={df})')
+axes[1].set_title('v5 - red ball', fontsize=14)
+axes[1].set_xlabel('$\chi^2$', fontsize=12)
+axes[1].legend(fontsize=11)
+
+plt.show()
+```
+
+
+    
+![png](README_files/README_59_0.png)
+    
+
+
+The figure above shows the simulated (MC) and theoretical distributions for the 5th version of the draw and both ball colors.As expected, the simulated results for the red ball match the theoretical curve almost perfectly. For the white balls, however, the standard theoretical curve is shifted too far to the right compared to our simulations. Because the theoretical curve is pushed to the right, it naturally calculates a much larger area in the tail, which explains why the standard test gives an inflated p-value.
